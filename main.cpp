@@ -150,6 +150,17 @@ int main(int, char **) {
   // io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f,
   // NULL, io.Fonts->GetGlyphRangesJapanese()); IM_ASSERT(font != NULL);
 
+  ImFontConfig config;
+  config.MergeMode = true;
+
+  io.Fonts->AddFontFromFileTTF("SourceSansPro-Regular.ttf", 20.0f);
+  io.Fonts->AddFontFromFileTTF("Sarabun-Regular.ttf", 20.0f, &config,
+                               io.Fonts->GetGlyphRangesThai());
+  io.Fonts->AddFontFromFileTTF("mplus-1c-regular.ttf", 20.0f, &config,
+                               io.Fonts->GetGlyphRangesJapanese());
+
+  io.Fonts->Build();
+
   // Our state
   bool show_demo_window = true;
   bool show_another_window = false;
