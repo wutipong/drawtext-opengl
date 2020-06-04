@@ -166,6 +166,10 @@ int main(int, char **) {
       context.events.push_back(event);
     }
 
+    if (context.isDone) {
+      break;
+    }
+
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame(window);
     ImGui::NewFrame();
