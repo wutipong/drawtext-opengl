@@ -14,6 +14,9 @@
 #include <SDL.h>
 #include <stdio.h>
 
+#include <ft2build.h>
+#include FT_FREETYPE_H
+
 // About Desktop OpenGL function loaders:
 //  Modern desktop OpenGL doesn't have a standard portable header file to load
 //  OpenGL function pointers. Helper libraries are often used for this purpose!
@@ -141,6 +144,7 @@ int main(int, char **) {
 
   Context context;
   context.isDone = false;
+  FT_Init_FreeType(&context.ftLibrary);
 
   Scene::ChangeScene<TestScene>(context);
 
@@ -174,6 +178,7 @@ int main(int, char **) {
   }
 
   Scene::Current()->Cleanup(context);
+  FT_Done_FreeType(context.ftLibrary);
 
   // Cleanup
   ImGui_ImplOpenGL3_Shutdown();
