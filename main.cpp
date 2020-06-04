@@ -149,15 +149,21 @@ int main(int, char **) {
   Scene::ChangeScene<TestScene>(context);
 
   while (!context.isDone) {
+    context.events.clear();
     SDL_Event event;
+
     while (SDL_PollEvent(&event)) {
       ImGui_ImplSDL2_ProcessEvent(&event);
+
       if (event.type == SDL_QUIT)
         context.isDone = true;
+
       if (event.type == SDL_WINDOWEVENT &&
           event.window.event == SDL_WINDOWEVENT_CLOSE &&
           event.window.windowID == SDL_GetWindowID(window))
         context.isDone = true;
+
+      context.events.push_back(event);
     }
 
     ImGui_ImplOpenGL3_NewFrame();
