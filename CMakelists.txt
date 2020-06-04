@@ -24,3 +24,9 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/source-sans-pro/TTF/SourceSansPro-Regular.
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/mplus-fonts/fonts/mplus-1c-regular.ttf
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
+add_custom_target(resources ALL SOURCES shaders/glyph.frag shaders/glyph.vert)
+
+add_custom_command(TARGET resources PRE_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy_directory
+                       ${CMAKE_SOURCE_DIR}/shaders/ ${CMAKE_CURRENT_BINARY_DIR})

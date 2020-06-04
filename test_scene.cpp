@@ -24,33 +24,35 @@ using namespace gl;
 #include IMGUI_IMPL_OPENGL_LOADER_CUSTOM
 #endif
 
+#include <fstream>
 #include <imgui.h>
+#include <sstream>
+#include <string>
+
+static GLuint ReadShader(const GLenum &shaderType, const char *filename) {
+  auto shader = glCreateShader(shaderType);
+
+  std::fstream fs(filename, std::ios_base::in);
+  std::stringstream buffer;
+  buffer << fs.rdbuf();
+
+  fs.close();
+
+  auto src = buffer.str();
+  GLchar const *files[] = {src.c_str()};
+  GLint lengths[] = {src.size()};
+
+  glShaderSource(shader, 1, files, lengths);
+  glCompileShader(shader);
+
+  return shader;
+}
 
 bool TestScene::Init(Context &context) {
-  constexpr char *vertexShaderSource =
-      "#version 330 core\n"
-      "layout (location = 0) in vec3 aPos;\n"
-      "void main()\n"
-      "{\n"
-      "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-      "}\0";
-
-  vertexShader = glCreateShader(GL_VERTEX_SHADER);
-  glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-  glCompileShader(vertexShader);
-
-  constexpr char *fragmentShaderSource =
-      "#version 330 core \n"
-      "out vec4 FragColor; \n"
-      "void main()\n"
-      "{\n"
-      "    FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-      "}\n";
-
-  fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-  glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-  glCompileShader(fragmentShader);
-
+  
+  vertexShader = ReadShader(GL_VERTEX_SHADER, "glyph.vert");
+  fragmentShader = ReadShader(GL_FRAGMENT_SHADER, "glyph.frag");
+  
   shaderProgram = glCreateProgram();
   glAttachShader(shaderProgram, vertexShader);
   glAttachShader(shaderProgram, fragmentShader);
@@ -67,13 +69,18 @@ void TestScene::Cleanup(Context &context) {
 void TestScene::Tick(Context &context) {
   glUseProgram(shaderProgram);
 
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
-  glEnableVertexAttribArray(0);
-
   unsigned int VBO;
   glGenBuffers(1, &VBO);
 
-  float vertices[] = {-0.5f, -0.5f, 0.0f, 0.5f, -0.5f, 0.0f, 0.0f, 0.5f, 0.0f};
+  float vertices[] = {
+      0.0f, 0.0f, 0.0f, 
+      context.windowWidth, 0.0f, 0.0f, 
+      context.windowWidth, context.windowHeight, 0.0f, 
+
+      context.windowWidth, context.windowHeight, 0.0f,
+      0.0f, context.windowHeight, 0.0f,
+      0.0f, 0.0f, 0.0f
+  };
 
   glBindBuffer(GL_ARRAY_BUFFER, VBO);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
@@ -81,12 +88,16 @@ void TestScene::Tick(Context &context) {
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
   glEnableVertexAttribArray(0);
 
+  glVertexAttrib1f(1, context.windowWidth);
+  glVertexAttrib1f(2, context.windowHeight);
+
   glUseProgram(shaderProgram);
 
-  glDrawArrays(GL_TRIANGLES, 0, 3);
+  glDrawArrays(GL_TRIANGLES, 0, 6);
 
   glDeleteBuffers(1, &VBO);
 }
+
 void TestScene::DrawUI(Context &context) {
   ImGui::Begin("Menu");
   context.isDone = ImGui::Button("quit");

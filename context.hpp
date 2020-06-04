@@ -11,6 +11,9 @@ struct Context {
   FT_Library ftLibrary;
   bool isDone;
   std::vector<SDL_Event> events;
+
+  int windowWidth;
+  int windowHeight;
 };
 
 #endif
