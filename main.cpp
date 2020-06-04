@@ -9,6 +9,8 @@
 #include "imgui.h"
 #include "imgui_impl_opengl3.h"
 #include "imgui_impl_sdl.h"
+#include "scene.hpp"
+#include "test_scene.hpp"
 #include <SDL.h>
 #include <stdio.h>
 
@@ -136,32 +138,42 @@ int main(int, char **) {
   ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
   // Main loop
-  bool done = false;
-  while (!done) {
+
+  Context context;
+  context.isDone = false;
+
+  Scene::ChangeScene<TestScene>(context);
+
+  while (!context.isDone) {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
       ImGui_ImplSDL2_ProcessEvent(&event);
       if (event.type == SDL_QUIT)
-        done = true;
+        context.isDone = true;
       if (event.type == SDL_WINDOWEVENT &&
           event.window.event == SDL_WINDOWEVENT_CLOSE &&
           event.window.windowID == SDL_GetWindowID(window))
-        done = true;
+        context.isDone = true;
     }
 
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame(window);
     ImGui::NewFrame();
 
-    // Draw UI here
+    Scene::DrawUICurrent(context);
 
     ImGui::Render();
     glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
     glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
     glClear(GL_COLOR_BUFFER_BIT);
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+    Scene::TickCurrent(context);
+
     SDL_GL_SwapWindow(window);
   }
+
+  Scene::Current()->Cleanup(context);
 
   // Cleanup
   ImGui_ImplOpenGL3_Shutdown();
