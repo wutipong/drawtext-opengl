@@ -134,6 +134,8 @@ int main(int, char **) {
 
   Context context;
   context.isDone = false;
+  SDL_GetWindowSize(window, &context.windowWidth, &context.windowHeight);
+
   FT_Init_FreeType(&context.ftLibrary);
 
   Scene::ChangeScene<TestScene>(context);

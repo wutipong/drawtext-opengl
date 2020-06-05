@@ -14,4 +14,7 @@ private:
   unsigned int fragmentShader;
   unsigned int shaderProgram;
   unsigned int texture;
+
+  unsigned int vertexArray;
+  unsigned int vertexBuffer;
 };

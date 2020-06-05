@@ -93,27 +93,9 @@ bool TestScene::Init(Context &context) {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-  return true;
-};
-
-void TestScene::Cleanup(Context &context) {
-  glDeleteTextures(1, &texture);
-  glDeleteShader(vertexShader);
-  glDeleteShader(fragmentShader);
-};
-
-void TestScene::Tick(Context &context) {
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-  auto error = glGetError();
-
-  GLuint vertexArray;
   glGenVertexArrays(1, &vertexArray);
   glBindVertexArray(vertexArray);
-
-  unsigned int VBO;
-  glGenBuffers(1, &VBO);
+  glGenBuffers(1, &vertexBuffer);
 
   float vertices[] = {0.0f,
                       0.0f,
@@ -151,13 +133,33 @@ void TestScene::Tick(Context &context) {
                       0.0f,
                       1.0f};
 
-  glBindBuffer(GL_ARRAY_BUFFER, VBO);
+  glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
 
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)0);
   glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float),
                         (void *)(3 * sizeof(float)));
+
+  return true;
+};
+
+void TestScene::Cleanup(Context &context) {
+  glDeleteBuffers(1, &vertexBuffer);
+  glDeleteVertexArrays(1, &vertexArray);
+
+  glDeleteTextures(1, &texture);
+  glDeleteShader(vertexShader);
+  glDeleteShader(fragmentShader);
+};
+
+void TestScene::Tick(Context &context) {
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+  auto error = glGetError();
+
+  glBindVertexArray(vertexArray);
+  glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
 
   glEnableVertexAttribArray(0);
   glEnableVertexAttribArray(1);
@@ -172,8 +174,8 @@ void TestScene::Tick(Context &context) {
   glDrawArrays(GL_TRIANGLES, 0, 6);
   error = glGetError();
 
-  glDeleteBuffers(1, &VBO);
-  glDeleteVertexArrays(1, &vertexArray);
+  glDisableVertexAttribArray(1);
+  glDisableVertexAttribArray(0);
 }
 
 void TestScene::DrawUI(Context &context) {
