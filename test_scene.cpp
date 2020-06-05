@@ -164,8 +164,7 @@ void TestScene::Tick(Context &context) {
   glEnableVertexAttribArray(0);
   glEnableVertexAttribArray(1);
 
-  glVertexAttrib1f(2, context.windowWidth);
-  glVertexAttrib1f(3, context.windowHeight);
+  glUniform2f(0, context.windowWidth, context.windowHeight);
 
   glBindTexture(GL_TEXTURE_2D, texture);
 
