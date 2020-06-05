@@ -24,8 +24,10 @@ using namespace gl;
 #include IMGUI_IMPL_OPENGL_LOADER_CUSTOM
 #endif
 
+#include <array>
 #include <fstream>
 #include <imgui.h>
+#include <limits>
 #include <sstream>
 #include <string>
 
@@ -48,54 +50,135 @@ static GLuint ReadShader(const GLenum &shaderType, const char *filename) {
   return shader;
 }
 
+template <size_t textureWidth, size_t textureHeight>
+static std::array<unsigned char, textureWidth * textureHeight>
+GenAlphaTexture() {
+  std::array<unsigned char, textureWidth * textureHeight> output;
+  for (int i = 0; i < output.size(); i++) {
+    output[i] = static_cast<unsigned char>(
+        i % std::numeric_limits<unsigned char>::max());
+  }
+
+  return output;
+}
+
 bool TestScene::Init(Context &context) {
-  
+  auto error = glGetError();
+
   vertexShader = ReadShader(GL_VERTEX_SHADER, "glyph.vert");
+  error = glGetError();
   fragmentShader = ReadShader(GL_FRAGMENT_SHADER, "glyph.frag");
-  
+  error = glGetError();
+
   shaderProgram = glCreateProgram();
+  error = glGetError();
   glAttachShader(shaderProgram, vertexShader);
+  error = glGetError();
   glAttachShader(shaderProgram, fragmentShader);
+  error = glGetError();
   glLinkProgram(shaderProgram);
+  error = glGetError();
+
+
+  glGenTextures(1, &texture);
+  error = glGetError();
+  glBindTexture(GL_TEXTURE_2D, texture);
+  error = glGetError();
+  constexpr size_t textureWidth = 64;
+  constexpr size_t textureHeight = 64;
+  auto data = GenAlphaTexture<textureWidth, textureHeight>();
+  error = glGetError();
+
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, textureWidth, textureHeight, 0,
+               GL_RED, GL_UNSIGNED_BYTE, data.data());
+  error = glGetError();
+
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  error = glGetError();
+
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  error = glGetError();
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  error = glGetError();
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  error = glGetError();
 
   return true;
 };
 
 void TestScene::Cleanup(Context &context) {
+  glDeleteTextures(1, &texture);
   glDeleteShader(vertexShader);
   glDeleteShader(fragmentShader);
 };
 
 void TestScene::Tick(Context &context) {
-  glUseProgram(shaderProgram);
+
+  auto error = glGetError();
 
   unsigned int VBO;
   glGenBuffers(1, &VBO);
 
-  float vertices[] = {
-      0.0f, 0.0f, 0.0f, 
-      context.windowWidth, 0.0f, 0.0f, 
-      context.windowWidth, context.windowHeight, 0.0f, 
+  float vertices[] = {0.0f,
+                      0.0f,
+                      0.0f,
+                      0.0f,
+                      1.0f,
+                      context.windowWidth,
+                      0.0f,
+                      0.0f,
+                      1.0f,
+                      1.0f,
+                      context.windowWidth,
+                      context.windowHeight,
+                      0.0f,
+                      1.0f,
+                      0.0f,
 
-      context.windowWidth, context.windowHeight, 0.0f,
-      0.0f, context.windowHeight, 0.0f,
-      0.0f, 0.0f, 0.0f
-  };
+                      context.windowWidth,
+                      context.windowHeight,
+                      0.0f,
+                      1.0f,
+                      0.0f,
+                      0.0f,
+                      context.windowHeight,
+                      0.0f,
+                      0.0f,
+                      0.0f,
+                      0.0f,
+                      0.0f,
+                      0.0f,
+                      0.0f,
+                      1.0f};
 
   glBindBuffer(GL_ARRAY_BUFFER, VBO);
+  error = glGetError();
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+    error = glGetError();
+
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)0);
+  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float),
+                        (void *)(3 * sizeof(float)));
+
+    error = glGetError();
+
   glEnableVertexAttribArray(0);
+  glEnableVertexAttribArray(1);
+  error = glGetError();
+  glVertexAttrib1f(2, context.windowWidth);
+  glVertexAttrib1f(3, context.windowHeight);
+  error = glGetError();
 
-  glVertexAttrib1f(1, context.windowWidth);
-  glVertexAttrib1f(2, context.windowHeight);
 
+  glBindTexture(GL_TEXTURE_2D, texture);
+  error = glGetError();
   glUseProgram(shaderProgram);
-
+  error = glGetError();
   glDrawArrays(GL_TRIANGLES, 0, 6);
-
+  error = glGetError();
   glDeleteBuffers(1, &VBO);
+  error = glGetError();
 }
 
 void TestScene::DrawUI(Context &context) {
