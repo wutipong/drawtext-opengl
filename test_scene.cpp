@@ -31,24 +31,8 @@ using namespace gl;
 #include <sstream>
 #include <string>
 
-static GLuint ReadShader(const GLenum &shaderType, const char *filename) {
-  auto shader = glCreateShader(shaderType);
+#include "shader.hpp"
 
-  std::fstream fs(filename, std::ios_base::in);
-  std::stringstream buffer;
-  buffer << fs.rdbuf();
-
-  fs.close();
-
-  auto src = buffer.str();
-  GLchar const *files[] = {src.c_str()};
-  GLint lengths[] = {src.size()};
-
-  glShaderSource(shader, 1, files, lengths);
-  glCompileShader(shader);
-
-  return shader;
-}
 
 template <size_t textureWidth, size_t textureHeight>
 static std::array<unsigned char, textureWidth * textureHeight>
