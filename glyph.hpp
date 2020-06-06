@@ -12,10 +12,10 @@ public:
   static void Init();
   static void CleanUp();
 
-  friend class Font;
+
 
 private:
-
+  friend class Font;
   Glyph(){};
   Glyph(const Glyph &){};
   Glyph(const GLuint &texture, const int &width, const int &height);

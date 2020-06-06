@@ -1,4 +1,5 @@
 #include "font.hpp"
+#include "glyph.hpp"
 
 #include <cstddef>
 #include <utf8.h>
@@ -35,20 +36,20 @@ std::vector<std::shared_ptr<Glyph>> Font::CreateGlyphs(const Context &context,
     FT_Load_Char(ftFace.get(), c, FT_LOAD_RENDER);
 
     auto bitmap = ftFace->glyph->bitmap;
-    
+
     auto texture = CreateTextureFromFT_Bitmap(bitmap);
     auto width = bitmap.width;
     auto height = bitmap.rows;
 
     auto metrics = ftFace->glyph->metrics;
 
-    float bearingX = (float) metrics.horiBearingX / 64.0f;
-    float bearingY = (float) metrics.horiBearingY / 64.0f;
+    float bearingX = (float)metrics.horiBearingX / 64.0f;
+    float bearingY = (float)metrics.horiBearingY / 64.0f;
 
     x += (float)metrics.horiAdvance / 64.0f;
 
-    auto g = std::make_shared<Glyph>(texture, width, height);
-    output.push_back(g);
+    auto g = new Glyph(texture, width, height);
+    output.push_back(std::shared_ptr<Glyph>(g));
   }
 
   return output;
@@ -64,21 +65,28 @@ GLuint Font::CreateTextureFromFT_Bitmap(const FT_Bitmap &bitmap) {
 
   glBindTexture(GL_TEXTURE_2D, texture);
 
-  std::vector<std::uint8_t> buffer;
-  buffer.resize(size_t(bitmap.width) * size_t(bitmap.rows));
-
   auto width = bitmap.width;
   auto height = bitmap.rows;
   auto pitch = bitmap.pitch;
 
   unsigned char *src_pixels = bitmap.buffer;
+  char *buffer = new char[size_t(width) * size_t(height)];
 
-  for (unsigned int y = 0; y < bitmap.rows; y++) {
-    memcpy(buffer.data() + y * width, bitmap.buffer + y * pitch, width);
+  for (int y = 0; y < height; y++) {
+    for (int x = 0; x < width; x++) {
+      buffer[(y * width) + x] = src_pixels[(y * pitch) + x];
+    }
   }
 
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width, height, 0, GL_RED,
-               GL_UNSIGNED_BYTE, buffer.data());
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width, pitch, 0, GL_RED,
+               GL_UNSIGNED_BYTE, buffer);
+
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+
+  delete[] buffer;
 
   return texture;
 }

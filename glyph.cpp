@@ -24,6 +24,9 @@ Glyph::Glyph(const GLuint &texture, const int &width, const int &height)
     return;
   }
 
+  glGenVertexArrays(1, &vertexArray);
+  glBindVertexArray(vertexArray);
+
   glGenBuffers(bufferSize, buffers);
   glBindBuffer(GL_ARRAY_BUFFER, buffers[vertexBufferIndex]);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers[indexBufferIndex]);
@@ -33,7 +36,7 @@ Glyph::Glyph(const GLuint &texture, const int &width, const int &height)
   glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float),
                         (void *)(3 * sizeof(float)));
 
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferIndex);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers[indexBufferIndex]);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices,
                GL_STATIC_DRAW);
 }
@@ -42,6 +45,7 @@ Glyph::~Glyph() {
   if (texture == 0) {
     return;
   }
+  glDeleteVertexArrays(1, &vertexArray);
   glDeleteBuffers(bufferSize, buffers);
   glDeleteTextures(1, &texture);
 }
@@ -64,6 +68,8 @@ void Glyph::Render(const Context &context) {
   glEnableVertexAttribArray(0);
   glEnableVertexAttribArray(1);
 
+  glVertexAttrib3f(2, width, height, 1.0f);
+
   glUniform2f(0, context.windowWidth, context.windowHeight);
 
   glBindTexture(GL_TEXTURE_2D, texture);
@@ -80,6 +86,12 @@ void Glyph::Render(const Context &context) {
 void Glyph::Init() {
   vertexShader = ReadShader(GL_VERTEX_SHADER, "glyph.vert");
   fragmentShader = ReadShader(GL_FRAGMENT_SHADER, "glyph.frag");
+
+  program = glCreateProgram();
+
+  glAttachShader(program, vertexShader);
+  glAttachShader(program, fragmentShader);
+  glLinkProgram(program);
 };
 void Glyph::CleanUp() {
   glDeleteShader(vertexShader);
