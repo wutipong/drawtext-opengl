@@ -17,4 +17,5 @@ private:
 
   unsigned int vertexArray;
   unsigned int vertexBuffer;
+  unsigned int indexBuffer;
 };
