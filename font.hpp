@@ -20,7 +20,7 @@ public:
   Font(const Font &f);
   Font(const Context &context, const std::string filename);
 
-  std::vector<Glyph> CreateGlyph(const Context &context,
+  std::vector<std::shared_ptr<Glyph>> CreateGlyphs(const Context &context,
                                  const std::string &text, const int &pixelSize);
 
 private:
