@@ -14,7 +14,8 @@ bool TestFontScene::Init(Context &context) {
   Glyph::Init();
   font = Font(context, "Sarabun-Regular.ttf");
   //glyphs = font.CreateGlyphs(context, "H", 128);
-  glyphs = font.CreateGlyphs(context, "A", 64);
+  glyphs = font.CreateGlyphs(context, "F", 64);
+
 
   return true;
 }
