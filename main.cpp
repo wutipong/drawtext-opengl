@@ -10,7 +10,6 @@
 #include "imgui_impl_opengl3.h"
 #include "imgui_impl_sdl.h"
 #include "scene.hpp"
-#include "test_scene.hpp"
 #include "test_font_scene.hpp"
 
 #include <SDL.h>

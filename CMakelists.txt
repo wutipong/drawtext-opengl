@@ -4,17 +4,24 @@ project(drawtext-opengl)
 
 add_executable(main 
 	"main.cpp"
-    imgui_impl_opengl3.cpp imgui_impl_opengl3.h
-    imgui_impl_sdl.cpp imgui_impl_sdl.h
- "context.hpp" "scene.cpp" "scene.hpp" "test_scene.hpp" "test_scene.cpp" "shader.hpp" "shader.cpp" "font.cpp" "font.hpp" "glyph.cpp" "glyph.hpp" "test_font_scene.hpp" "test_font_scene.cpp")
+    "imgui_impl_opengl3.cpp" "imgui_impl_opengl3.h"
+    "imgui_impl_sdl.cpp" "imgui_impl_sdl.h"
+    "context.hpp" 
+    "scene.cpp" "scene.hpp" 
+    "shader.hpp" "shader.cpp" 
+    "font.cpp" "font.hpp" 
+    "glyph.cpp" "glyph.hpp" 
+    "test_font_scene.hpp" "test_font_scene.cpp")
 
 find_package(freetype CONFIG REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(SDL2 CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)
 find_package(harfbuzz CONFIG REQUIRED)
+find_package(glm CONFIG REQUIRED)
 
-target_link_libraries(main PRIVATE SDL2::SDL2 SDL2::SDL2main imgui::imgui freetype harfbuzz::harfbuzz GLEW::GLEW)
+target_link_libraries(main PRIVATE SDL2::SDL2 SDL2::SDL2main 
+    imgui::imgui freetype harfbuzz::harfbuzz GLEW::GLEW glm)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Sarabun/fonts/Sarabun-Regular.ttf
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

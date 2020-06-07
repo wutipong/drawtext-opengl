@@ -2,11 +2,12 @@
 out vec4 FragColor;
 
 in vec2 TexCoord;
-layout(binding=0) uniform sampler2D tex;
+layout(binding=0) uniform sampler2D alphaMap;
+uniform vec4 glyphColor;
 
 void main() { 
-	//FragColor = vec4(1.0f, 0, 1.0f, texture(tex, TexCoord).r);
-	float alpha = texture(tex, TexCoord).r;
-
-	FragColor = vec4(alpha, 0, 1.0f, 1.0f);
+	float alpha = texture(alphaMap, TexCoord).r;
+	
+	FragColor = glyphColor;
+	FragColor.a = glyphColor.a * alpha;
 }

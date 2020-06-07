@@ -1,10 +1,13 @@
 #include "glyph.hpp"
 
+#include <glm/gtc/type_ptr.hpp>
+
 #include "shader.hpp"
 
 GLuint Glyph::program;
 GLuint Glyph::vertexShader;
 GLuint Glyph::fragmentShader;
+GLuint Glyph::colorUniform;
 
 const float Glyph::vertices[] = {0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
 
@@ -18,8 +21,8 @@ const GLubyte Glyph::indices[] = {0, 1, 2,
 
                                   2, 3, 0};
 
-Glyph::Glyph(const GLuint &texture, const int &width, const int &height)
-    : texture(texture), width(width), height(height) {
+Glyph::Glyph(const GLuint &texture, const glm::mat4& glyphTransform)
+    : texture(texture), glyphTransform(glyphTransform) {
   if (texture == 0) {
     return;
   }
@@ -50,7 +53,7 @@ Glyph::~Glyph() {
   glDeleteTextures(1, &texture);
 }
 
-void Glyph::Render(const Context &context) {
+void Glyph::Render(const Context &context, const glm::vec4& color) {
   // Texture #0 means no texture associated to the glyph.
   // There's nothing to draw.
   if (texture == 0)
@@ -68,11 +71,13 @@ void Glyph::Render(const Context &context) {
   glEnableVertexAttribArray(0);
   glEnableVertexAttribArray(1);
 
-  glVertexAttrib3f(2, width, height, 1.0f);
-
   glUniform2f(0, context.windowWidth, context.windowHeight);
+  glUniformMatrix4fv(1, 1, GL_FALSE, glm::value_ptr(glyphTransform));
+  glUniformMatrix4fv(2, 1, GL_FALSE, glm::value_ptr(transform));
 
   glBindTexture(GL_TEXTURE_2D, texture);
+
+  glUniform4f(colorUniform, color.r, color.g, color.b, color.a);
 
   glUseProgram(program);
 
@@ -92,6 +97,8 @@ void Glyph::Init() {
   glAttachShader(program, vertexShader);
   glAttachShader(program, fragmentShader);
   glLinkProgram(program);
+
+  colorUniform = glGetUniformLocation(program, "glyphColor");
 };
 void Glyph::CleanUp() {
   glDeleteShader(vertexShader);

@@ -2,6 +2,8 @@
 #include "glyph.hpp"
 
 #include <cstddef>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <utf8.h>
 
 #include "context.hpp"
@@ -46,10 +48,17 @@ std::vector<std::shared_ptr<Glyph>> Font::CreateGlyphs(const Context &context,
     float bearingX = (float)metrics.horiBearingX / 64.0f;
     float bearingY = (float)metrics.horiBearingY / 64.0f;
 
-    x += (float)metrics.horiAdvance / 64.0f;
+    glm::mat4 glyphTransform{1.0f};
+    glyphTransform = glm::translate(
+        glyphTransform, glm::vec3(x + bearingX, bearingY - height, 0.0f));
+    glyphTransform = glm::scale(glyphTransform, glm::vec3(width, height, 1.0));
+    
 
-    auto g = new Glyph(texture, width, height);
+    auto g = new Glyph(texture, glyphTransform);
+
     output.push_back(std::shared_ptr<Glyph>(g));
+
+    x += (float)metrics.horiAdvance / 64.0f;
   }
 
   return output;
@@ -69,18 +78,16 @@ GLuint Font::CreateTextureFromFT_Bitmap(const FT_Bitmap &bitmap) {
   auto height = bitmap.rows;
   auto pitch = bitmap.pitch;
 
-  unsigned char *src_pixels = bitmap.buffer;
+  unsigned char *src = bitmap.buffer;
   char *buffer = new char[size_t(width) * size_t(height)];
 
-  for (int y = 0; y < height; y++) {
-    for (int x = 0; x < width; x++) {
-      buffer[(y * width) + x] = src_pixels[(y * pitch) + x];
-    }
+  for (int i = 0; i < height; i++) {
+    memcpy(buffer + (i * width), src + (i * pitch), width);
   }
 
-  glPixelStorei(GL_UNPACK_ALIGNMENT, 1); 
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width, pitch, 0, GL_RED,
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width, height, 0, GL_RED,
                GL_UNSIGNED_BYTE, buffer);
 
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
