@@ -11,6 +11,8 @@
 #include "imgui_impl_sdl.h"
 #include "scene.hpp"
 #include "test_scene.hpp"
+#include "test_font_scene.hpp"
+
 #include <SDL.h>
 #include <stdio.h>
 
@@ -138,7 +140,7 @@ int main(int, char **) {
 
   FT_Init_FreeType(&context.ftLibrary);
 
-  Scene::ChangeScene<TestScene>(context);
+  Scene::ChangeScene<TestFontScene>(context);
 
   while (!context.isDone) {
     context.events.clear();

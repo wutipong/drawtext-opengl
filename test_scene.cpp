@@ -99,23 +99,12 @@ bool TestScene::Init(Context &context) {
                       1.0f,
                       0.0f,
 
-                      context.windowWidth,
-                      context.windowHeight,
-                      0.0f,
-                      1.0f,
-                      0.0f,
 
                       0.0f,
                       context.windowHeight,
                       0.0f,
                       0.0f,
-                      0.0f,
-
-                      0.0f,
-                      0.0f,
-                      0.0f,
-                      0.0f,
-                      1.0f};
+                      0.0f};
 
   glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
 
@@ -124,11 +113,21 @@ bool TestScene::Init(Context &context) {
   glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float),
                         (void *)(3 * sizeof(float)));
 
+  glGenBuffers(1, &indexBuffer);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+
+  GLubyte indices[] = {0, 1, 2,
+
+                       2, 3, 0};
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices,
+               GL_STATIC_DRAW);
+
   return true;
 };
 
 void TestScene::Cleanup(Context &context) {
   glDeleteBuffers(1, &vertexBuffer);
+  glDeleteBuffers(1, &indexBuffer);
   glDeleteVertexArrays(1, &vertexArray);
 
   glDeleteTextures(1, &texture);
@@ -144,6 +143,7 @@ void TestScene::Tick(Context &context) {
 
   glBindVertexArray(vertexArray);
   glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
 
   glEnableVertexAttribArray(0);
   glEnableVertexAttribArray(1);
@@ -154,7 +154,8 @@ void TestScene::Tick(Context &context) {
 
   glUseProgram(shaderProgram);
 
-  glDrawArrays(GL_TRIANGLES, 0, 6);
+  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, (void *)0);
+
   error = glGetError();
 
   glDisableVertexAttribArray(1);
