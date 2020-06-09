@@ -30,8 +30,8 @@ std::vector<std::shared_ptr<Glyph>> Font::CreateGlyphs(const Context &context,
   std::vector<std::shared_ptr<Glyph>> output;
 
   std::vector<uint16_t> charactors;
-  auto end_it = utf8::find_invalid(text.begin(), text.end());
-  utf8::utf8to16(text.begin(), end_it, std::back_inserter(charactors));
+  auto endIter = utf8::find_invalid(text.begin(), text.end());
+  utf8::utf8to16(text.begin(), endIter, std::back_inserter(charactors));
 
   float x = start;
 
@@ -46,12 +46,12 @@ std::vector<std::shared_ptr<Glyph>> Font::CreateGlyphs(const Context &context,
 
   hb_shape(hbFont.get(), buffer, NULL, 0);
 
-  auto glyph_count = hb_buffer_get_length(buffer);
-  auto glyph_infos = hb_buffer_get_glyph_infos(buffer, NULL);
-  auto glyph_positions = hb_buffer_get_glyph_positions(buffer, NULL);
+  auto glyphCount = hb_buffer_get_length(buffer);
+  auto glyphInfos = hb_buffer_get_glyph_infos(buffer, NULL);
+  auto glyphPositions = hb_buffer_get_glyph_positions(buffer, NULL);
 
-  for (auto i = 0; i < glyph_count; i++) {
-    FT_Load_Glyph(ftFace.get(), glyph_infos[i].codepoint, FT_LOAD_RENDER);
+  for (auto i = 0; i < glyphCount; i++) {
+    FT_Load_Glyph(ftFace.get(), glyphInfos[i].codepoint, FT_LOAD_RENDER);
 
     auto bitmap = ftFace->glyph->bitmap;
 
@@ -64,8 +64,8 @@ std::vector<std::shared_ptr<Glyph>> Font::CreateGlyphs(const Context &context,
     float bearingX = (float)metrics.horiBearingX / 64.0f;
     float bearingY = (float)metrics.horiBearingY / 64.0f;
 
-    float offsetX = (float)glyph_positions[i].x_offset / 64.0f;
-    float offsetY = (float)glyph_positions[i].y_offset / 64.0f;
+    float offsetX = (float)glyphPositions[i].x_offset / 64.0f;
+    float offsetY = (float)glyphPositions[i].y_offset / 64.0f;
 
     glm::mat4 glyphTransform{1.0f};
     glyphTransform = glm::translate(
@@ -77,7 +77,7 @@ std::vector<std::shared_ptr<Glyph>> Font::CreateGlyphs(const Context &context,
 
     output.push_back(std::shared_ptr<Glyph>(g));
 
-    x += (float)glyph_positions[i].x_advance / 64.0f;
+    x += (float)glyphPositions[i].x_advance / 64.0f;
   }
 
   hb_buffer_destroy(buffer);
