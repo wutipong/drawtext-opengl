@@ -25,7 +25,7 @@ FontAtlas::CreateGlyphs(const Context &context, const icu::UnicodeString &str,
   size_t start = 0, end;
 
   for (auto i = 0; i < str.length(); i++) {
-    auto s = uscript_getScript(str[0], &error);
+    auto s = uscript_getScript(str[i], &error);
     if (s == script)
       continue;
 
