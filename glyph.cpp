@@ -21,7 +21,7 @@ const GLubyte Glyph::indices[] = {0, 1, 2,
 
                                   2, 3, 0};
 
-Glyph::Glyph(const GLuint &texture, const glm::mat4& glyphTransform)
+Glyph::Glyph(const GLuint &texture, const glm::mat4 &glyphTransform)
     : texture(texture), glyphTransform(glyphTransform) {
   if (texture == 0) {
     return;
@@ -53,7 +53,7 @@ Glyph::~Glyph() {
   glDeleteTextures(1, &texture);
 }
 
-void Glyph::Render(const Context &context, const glm::vec4& color) {
+void Glyph::Render(const Context &context, const glm::vec4 &color) {
   // Texture #0 means no texture associated to the glyph.
   // There's nothing to draw.
   if (texture == 0)
@@ -88,6 +88,7 @@ void Glyph::Render(const Context &context, const glm::vec4& color) {
   glDisableVertexAttribArray(1);
   glDisableVertexAttribArray(0);
 };
+
 void Glyph::Init() {
   vertexShader = ReadShader(GL_VERTEX_SHADER, "glyph.vert");
   fragmentShader = ReadShader(GL_FRAGMENT_SHADER, "glyph.frag");
@@ -98,8 +99,10 @@ void Glyph::Init() {
   glAttachShader(program, fragmentShader);
   glLinkProgram(program);
 
+  glUseProgram(program);
   colorUniform = glGetUniformLocation(program, "glyphColor");
 };
+
 void Glyph::CleanUp() {
   glDeleteShader(vertexShader);
   glDeleteShader(fragmentShader);
