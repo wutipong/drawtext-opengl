@@ -23,12 +23,10 @@ Font::Font(const Context &context, const std::string filename) {
 }
 
 std::vector<std::shared_ptr<Glyph>>
-Font::CreateGlyphs(const Context &context, const float &start,
+Font::CreateGlyphs(const Context &context, float &x,
                    const icu::UnicodeString &str, const int &pixelSize) {
 
   std::vector<std::shared_ptr<Glyph>> output;
-
-  float x = start;
 
   FT_Set_Pixel_Sizes(ftFace.get(), 0, pixelSize);
   hb_ft_font_changed(hbFont.get());

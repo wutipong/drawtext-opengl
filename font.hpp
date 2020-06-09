@@ -26,8 +26,8 @@ public:
   Font(const Context &context, const std::string filename);
 
   std::vector<std::shared_ptr<Glyph>>
-  CreateGlyphs(const Context &context, const float &start,
-               const icu::UnicodeString &str, const int &pixelSize);
+  CreateGlyphs(const Context &context, float &x, const icu::UnicodeString &str,
+               const int &pixelSize);
 
   hb_direction_t direction = HB_DIRECTION_LTR;
   hb_script_t script = HB_SCRIPT_LATIN;

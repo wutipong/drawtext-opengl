@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "font.hpp"
+#include "font_atlas.hpp"
 
 class TestFontScene : public Scene {
 public:
@@ -15,6 +16,6 @@ public:
   virtual void Cleanup(Context &context);
 
 private:
-  Font font;
+  FontAtlas fontAtlas;
   std::vector<std::shared_ptr<Glyph>> glyphs;
 };

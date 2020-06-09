@@ -16,9 +16,18 @@ void TestFontScene::Tick(Context &context) {
 
 bool TestFontScene::Init(Context &context) {
   Glyph::Init();
-  font = Font(context, "Sarabun-Regular.ttf");
+  fontAtlas.SetDefault(Font{context, "SourceSansPro-Regular.ttf"});
+  fontAtlas.AddFont(Font{context, "Sarabun-Regular.ttf"}, USCRIPT_THAI,
+                    HB_SCRIPT_THAI);
+
+  auto font = Font(context, "mplus-1c-regular.ttf");
+
+  fontAtlas.AddFont(font, USCRIPT_HIRAGANA, HB_SCRIPT_HIRAGANA);
+  fontAtlas.AddFont(font, USCRIPT_KATAKANA, HB_SCRIPT_KATAKANA);
+  fontAtlas.AddFont(font, USCRIPT_HAN, HB_SCRIPT_HAN);
+
   glyphs =
-      font.CreateGlyphs(context, 0, UNICODE_STRING_SIMPLE("Fuck Off!!"), 64);
+      fontAtlas.CreateGlyphs(context, UNICODE_STRING_SIMPLE("Fuck Off!!"), 64);
 
   for (auto g : glyphs) {
     g->transform =
