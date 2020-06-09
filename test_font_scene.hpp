@@ -18,4 +18,7 @@ public:
 private:
   FontAtlas fontAtlas;
   std::vector<std::shared_ptr<Glyph>> glyphs;
+  icu::UnicodeString currentText;
+  int pixelSize = 64;
+  glm::vec4 color = {0, 0, 0, 1.0f};
 };
