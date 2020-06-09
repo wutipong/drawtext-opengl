@@ -21,7 +21,9 @@ public:
   Font(const Context &context, const std::string filename);
 
   std::vector<std::shared_ptr<Glyph>> CreateGlyphs(const Context &context,
-                                 const std::string &text, const int &pixelSize);
+                                                   const float &start,
+                                                   const std::string &text,
+                                                   const int &pixelSize);
 
 private:
   std::shared_ptr<FT_FaceRec> ftFace;

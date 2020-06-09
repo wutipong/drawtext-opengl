@@ -15,7 +15,7 @@ void TestFontScene::Tick(Context &context) {
 bool TestFontScene::Init(Context &context) {
   Glyph::Init();
   font = Font(context, "Sarabun-Regular.ttf");
-  glyphs = font.CreateGlyphs(context, "Fuck Off!!", 64);
+  glyphs = font.CreateGlyphs(context, 0, "Fuck Off!!", 64);
 
   for (auto g : glyphs) {
     g->transform =

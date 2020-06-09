@@ -11,7 +11,6 @@
 Font::Font(const Font &f) : ftFace(f.ftFace) {}
 
 Font::Font(const Context &context, const std::string filename) {
-
   FT_Face face;
   auto error = FT_New_Face(context.ftLibrary, filename.c_str(), 0, &face);
   if (error) {
@@ -22,6 +21,7 @@ Font::Font(const Context &context, const std::string filename) {
 }
 
 std::vector<std::shared_ptr<Glyph>> Font::CreateGlyphs(const Context &context,
+                                                       const float &start,
                                                        const std::string &text,
                                                        const int &pixelSize) {
   std::vector<std::shared_ptr<Glyph>> output;
@@ -30,7 +30,7 @@ std::vector<std::shared_ptr<Glyph>> Font::CreateGlyphs(const Context &context,
   auto end_it = utf8::find_invalid(text.begin(), text.end());
   utf8::utf8to16(text.begin(), end_it, std::back_inserter(charactors));
 
-  float x = 0;
+  float x = start;
 
   FT_Set_Pixel_Sizes(ftFace.get(), 0, pixelSize);
 
@@ -52,7 +52,6 @@ std::vector<std::shared_ptr<Glyph>> Font::CreateGlyphs(const Context &context,
     glyphTransform = glm::translate(
         glyphTransform, glm::vec3(x + bearingX, bearingY - height, 0.0f));
     glyphTransform = glm::scale(glyphTransform, glm::vec3(width, height, 1.0));
-    
 
     auto g = new Glyph(texture, glyphTransform);
 
