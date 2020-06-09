@@ -4,7 +4,7 @@
 #include <cstddef>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <utf8.h>
+#include <unicode/unistr.h>
 
 #include "context.hpp"
 
@@ -28,10 +28,7 @@ std::vector<std::shared_ptr<Glyph>> Font::CreateGlyphs(const Context &context,
                                                        const std::string &text,
                                                        const int &pixelSize) {
   std::vector<std::shared_ptr<Glyph>> output;
-
-  std::vector<uint16_t> charactors;
-  auto endIter = utf8::find_invalid(text.begin(), text.end());
-  utf8::utf8to16(text.begin(), endIter, std::back_inserter(charactors));
+  auto str = icu::UnicodeString::fromUTF8(text);
 
   float x = start;
 
@@ -41,8 +38,9 @@ std::vector<std::shared_ptr<Glyph>> Font::CreateGlyphs(const Context &context,
   auto buffer = hb_buffer_create();
   hb_buffer_set_direction(buffer, direction);
   hb_buffer_set_script(buffer, script);
-  hb_buffer_add_utf16(buffer, charactors.data(), charactors.size(), 0,
-                      charactors.size());
+  hb_buffer_add_utf16(buffer,
+                      reinterpret_cast<const uint16_t *>(str.getBuffer()),
+                      str.length(), 0, str.length());
 
   hb_shape(hbFont.get(), buffer, NULL, 0);
 

@@ -11,7 +11,7 @@ add_executable(main
     "shader.hpp" "shader.cpp" 
     "font.cpp" "font.hpp" 
     "glyph.cpp" "glyph.hpp" 
-    "test_font_scene.hpp" "test_font_scene.cpp")
+    "test_font_scene.hpp" "test_font_scene.cpp" )
 
 find_package(freetype CONFIG REQUIRED)
 find_package(GLEW REQUIRED)
@@ -19,9 +19,10 @@ find_package(SDL2 CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)
 find_package(harfbuzz CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
+find_package(ICU REQUIRED COMPONENTS uc dt in io)
 
 target_link_libraries(main PRIVATE SDL2::SDL2 SDL2::SDL2main 
-    imgui::imgui freetype harfbuzz::harfbuzz GLEW::GLEW glm)
+    imgui::imgui freetype harfbuzz::harfbuzz GLEW::GLEW glm ICU::uc)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Sarabun/fonts/Sarabun-Regular.ttf
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
