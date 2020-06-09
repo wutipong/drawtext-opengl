@@ -4,7 +4,6 @@
 #include <cstddef>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <unicode/unistr.h>
 
 #include "context.hpp"
 
@@ -23,12 +22,11 @@ Font::Font(const Context &context, const std::string filename) {
                                       [](auto f) { hb_font_destroy(f); });
 }
 
-std::vector<std::shared_ptr<Glyph>> Font::CreateGlyphs(const Context &context,
-                                                       const float &start,
-                                                       const std::string &text,
-                                                       const int &pixelSize) {
+std::vector<std::shared_ptr<Glyph>>
+Font::CreateGlyphs(const Context &context, const float &start,
+                   const icu::UnicodeString &str, const int &pixelSize) {
+
   std::vector<std::shared_ptr<Glyph>> output;
-  auto str = icu::UnicodeString::fromUTF8(text);
 
   float x = start;
 

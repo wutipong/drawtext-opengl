@@ -6,6 +6,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <imgui.h>
 
+#include <unicode/unistr.h>
+
 void TestFontScene::Tick(Context &context) {
   for (auto g : glyphs) {
     g->Render(context, glm::vec4(0, 0, 0.7f, 1.0f));
@@ -15,7 +17,8 @@ void TestFontScene::Tick(Context &context) {
 bool TestFontScene::Init(Context &context) {
   Glyph::Init();
   font = Font(context, "Sarabun-Regular.ttf");
-  glyphs = font.CreateGlyphs(context, 0, "Fuck Off!!", 64);
+  glyphs =
+      font.CreateGlyphs(context, 0, UNICODE_STRING_SIMPLE("Fuck Off!!"), 64);
 
   for (auto g : glyphs) {
     g->transform =

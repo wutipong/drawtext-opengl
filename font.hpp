@@ -13,6 +13,8 @@
 #include <harfbuzz/hb-ft.h>
 #include <harfbuzz/hb.h>
 
+#include <unicode/unistr.h>
+
 #include "glyph.hpp"
 
 class Context;
@@ -23,10 +25,9 @@ public:
   Font(const Font &f);
   Font(const Context &context, const std::string filename);
 
-  std::vector<std::shared_ptr<Glyph>> CreateGlyphs(const Context &context,
-                                                   const float &start,
-                                                   const std::string &text,
-                                                   const int &pixelSize);
+  std::vector<std::shared_ptr<Glyph>>
+  CreateGlyphs(const Context &context, const float &start,
+               const icu::UnicodeString &str, const int &pixelSize);
 
   hb_direction_t direction = HB_DIRECTION_LTR;
   hb_script_t script = HB_SCRIPT_LATIN;
