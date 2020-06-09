@@ -2,7 +2,6 @@
 
 #include "glyph.hpp"
 
-#include <array>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -28,16 +27,13 @@ bool TestFontScene::Init(Context &context) {
   fontAtlas.AddFont(font, USCRIPT_KATAKANA, HB_SCRIPT_KATAKANA);
   fontAtlas.AddFont(font, USCRIPT_HAN, HB_SCRIPT_HAN);
 
+  std::fill(buffer.begin(), buffer.end(), 0);
+
   return true;
 }
 void TestFontScene::Cleanup(Context &context) { Glyph::CleanUp(); }
 
 void TestFontScene::DrawUI(Context &context) {
-  std::array<char, 100> buffer;
-  std::string str;
-  currentText.toUTF8String(str);
-  std::fill(buffer.begin(), buffer.end(), 0);
-  std::copy(str.begin(), str.end(), buffer.begin());
 
   ImGui::Begin("Menu");
 
@@ -49,9 +45,9 @@ void TestFontScene::DrawUI(Context &context) {
 
   ImGui::End();
 
-  currentText = icu::UnicodeString::fromUTF8(buffer.data());
+  auto text = icu::UnicodeString::fromUTF8(buffer.data());
 
-  glyphs = fontAtlas.CreateGlyphs(context, currentText, pixelSize);
+  glyphs = fontAtlas.CreateGlyphs(context, text, pixelSize);
 
   for (auto g : glyphs) {
     g->transform = glm::translate(g->transform,

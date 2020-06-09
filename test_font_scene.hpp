@@ -2,6 +2,8 @@
 
 #include "scene.hpp"
 
+#include <algorithm>
+#include <array>
 #include <memory>
 #include <vector>
 
@@ -18,7 +20,7 @@ public:
 private:
   FontAtlas fontAtlas;
   std::vector<std::shared_ptr<Glyph>> glyphs;
-  icu::UnicodeString currentText;
+  std::array<char, 100> buffer;
   int pixelSize = 64;
   glm::vec4 color = {0, 0, 0, 1.0f};
 };
