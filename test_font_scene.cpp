@@ -37,20 +37,22 @@ void TestFontScene::DrawUI(Context &context) {
 
   ImGui::Begin("Menu");
 
-  ImGui::InputText("Text", buffer.data(), buffer.size());
-  ImGui::SliderInt("size", &pixelSize, 0, 128);
-  ImGui::ColorEdit4("color", glm::value_ptr(color));
+  bool textChanged = ImGui::InputText("Text", buffer.data(), buffer.size());
+  bool sizeChanged = ImGui::SliderInt("size", &pixelSize, 0, 128);
+  bool colorChanged = ImGui::ColorEdit4("color", glm::value_ptr(color));
   ImGui::Separator();
   context.isDone = ImGui::Button("quit");
 
   ImGui::End();
 
-  auto text = icu::UnicodeString::fromUTF8(buffer.data());
+  if (textChanged || sizeChanged || colorChanged) {
+    auto text = icu::UnicodeString::fromUTF8(buffer.data());
 
-  glyphs = fontAtlas.CreateGlyphs(context, text, pixelSize);
+    glyphs = fontAtlas.CreateGlyphs(context, text, pixelSize);
 
-  for (auto g : glyphs) {
-    g->transform = glm::translate(g->transform,
-                                  glm::vec3(0, context.windowHeight / 2, 0.0));
+    for (auto g : glyphs) {
+      g->transform = glm::translate(
+          g->transform, glm::vec3(0, context.windowHeight / 2, 0.0));
+    }
   }
 }
