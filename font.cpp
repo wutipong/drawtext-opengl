@@ -8,7 +8,7 @@
 
 #include "context.hpp"
 
-Font::Font(const Font &f) : ftFace(f.ftFace) {}
+Font::Font(const Font &f) : ftFace(f.ftFace), hbFont(f.hbFont) {}
 
 Font::Font(const Context &context, const std::string filename) {
   FT_Face face;
@@ -16,8 +16,11 @@ Font::Font(const Context &context, const std::string filename) {
   if (error) {
     throw "error";
   }
+  auto hb_font_ptr = hb_ft_font_create(face, 0);
 
   ftFace = std::shared_ptr<FT_FaceRec>(face, [](auto f) { FT_Done_Face(f); });
+  hbFont = std::shared_ptr<hb_font_t>(hb_font_ptr,
+                                      [](auto f) { hb_font_destroy(f); });
 }
 
 std::vector<std::shared_ptr<Glyph>> Font::CreateGlyphs(const Context &context,
@@ -26,16 +29,29 @@ std::vector<std::shared_ptr<Glyph>> Font::CreateGlyphs(const Context &context,
                                                        const int &pixelSize) {
   std::vector<std::shared_ptr<Glyph>> output;
 
-  std::vector<FT_ULong> charactors;
+  std::vector<uint16_t> charactors;
   auto end_it = utf8::find_invalid(text.begin(), text.end());
   utf8::utf8to16(text.begin(), end_it, std::back_inserter(charactors));
 
   float x = start;
 
   FT_Set_Pixel_Sizes(ftFace.get(), 0, pixelSize);
+  hb_ft_font_changed(hbFont.get());
 
-  for (auto c : charactors) {
-    FT_Load_Char(ftFace.get(), c, FT_LOAD_RENDER);
+  auto buffer = hb_buffer_create();
+  hb_buffer_set_direction(buffer, direction);
+  hb_buffer_set_script(buffer, script);
+  hb_buffer_add_utf16(buffer, charactors.data(), charactors.size(), 0,
+                      charactors.size());
+
+  hb_shape(hbFont.get(), buffer, NULL, 0);
+
+  auto glyph_count = hb_buffer_get_length(buffer);
+  auto glyph_infos = hb_buffer_get_glyph_infos(buffer, NULL);
+  auto glyph_positions = hb_buffer_get_glyph_positions(buffer, NULL);
+
+  for (auto i = 0; i < glyph_count; i++) {
+    FT_Load_Glyph(ftFace.get(), glyph_infos[i].codepoint, FT_LOAD_RENDER);
 
     auto bitmap = ftFace->glyph->bitmap;
 
@@ -48,17 +64,23 @@ std::vector<std::shared_ptr<Glyph>> Font::CreateGlyphs(const Context &context,
     float bearingX = (float)metrics.horiBearingX / 64.0f;
     float bearingY = (float)metrics.horiBearingY / 64.0f;
 
+    float offsetX = (float)glyph_positions[i].x_offset / 64.0f;
+    float offsetY = (float)glyph_positions[i].y_offset / 64.0f;
+
     glm::mat4 glyphTransform{1.0f};
     glyphTransform = glm::translate(
-        glyphTransform, glm::vec3(x + bearingX, bearingY - height, 0.0f));
+        glyphTransform,
+        glm::vec3(x + bearingX + offsetX, bearingY - height + offsetY, 0.0f));
     glyphTransform = glm::scale(glyphTransform, glm::vec3(width, height, 1.0));
 
     auto g = new Glyph(texture, glyphTransform);
 
     output.push_back(std::shared_ptr<Glyph>(g));
 
-    x += (float)metrics.horiAdvance / 64.0f;
+    x += (float)glyph_positions[i].x_advance / 64.0f;
   }
+
+  hb_buffer_destroy(buffer);
 
   return output;
 }

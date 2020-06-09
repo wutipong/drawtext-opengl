@@ -10,6 +10,9 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
+#include <harfbuzz/hb-ft.h>
+#include <harfbuzz/hb.h>
+
 #include "glyph.hpp"
 
 class Context;
@@ -25,7 +28,12 @@ public:
                                                    const std::string &text,
                                                    const int &pixelSize);
 
+  hb_direction_t direction = HB_DIRECTION_LTR;
+  hb_script_t script = HB_SCRIPT_LATIN;
+
 private:
   std::shared_ptr<FT_FaceRec> ftFace;
+  std::shared_ptr<hb_font_t> hbFont;
+
   static GLuint CreateTextureFromFT_Bitmap(const FT_Bitmap &bitmap);
 };
