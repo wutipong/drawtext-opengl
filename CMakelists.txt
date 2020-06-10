@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.15)
 
 project(drawtext-opengl)
 
+add_subdirectory(msdfgen)
+
 add_executable(main 
 	"main.cpp"
     "imgui_impl_opengl3.cpp" "imgui_impl_opengl3.h"
@@ -22,7 +24,7 @@ find_package(glm CONFIG REQUIRED)
 find_package(ICU REQUIRED COMPONENTS uc)
 
 target_link_libraries(main PRIVATE SDL2::SDL2 SDL2::SDL2main 
-    imgui::imgui freetype harfbuzz::harfbuzz GLEW::GLEW glm ICU::uc )
+    imgui::imgui freetype harfbuzz::harfbuzz GLEW::GLEW glm ICU::uc msdfgen::msdfgen)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Sarabun/fonts/Sarabun-Regular.ttf
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

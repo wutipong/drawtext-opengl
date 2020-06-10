@@ -5,3 +5,5 @@
 /out/build/x64-Debug (default)
 /.vs
 /out/build/x64-Debug
+/build/CMakeFiles
+/build/CMakeCache.txt

@@ -7,3 +7,6 @@
 [submodule "mplus-fonts"]
 	path = mplus-fonts
 	url = https://github.com/rayshan/mplus-fonts.git
+[submodule "msdfgen"]
+	path = msdfgen
+	url = https://github.com/wutipong/msdfgen.git
