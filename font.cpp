@@ -94,7 +94,7 @@ GLuint Font::CreateTextureFromFT_Bitmap(const FT_Bitmap &bitmap) {
   auto pitch = bitmap.pitch;
 
   unsigned char *src = bitmap.buffer;
-  char *buffer = new char[size_t(width) * size_t(height)];
+  unsigned char *buffer = new unsigned char[size_t(width) * size_t(height)];
 
   for (int i = 0; i < height; i++) {
     memcpy(buffer + (i * width), src + (i * pitch), width);
