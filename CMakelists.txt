@@ -6,14 +6,19 @@ add_subdirectory(msdfgen)
 
 add_executable(main 
 	"main.cpp"
-    "imgui_impl_opengl3.cpp" "imgui_impl_opengl3.h"
-    "imgui_impl_sdl.cpp" "imgui_impl_sdl.h"
-    "context.hpp" 
-    "scene.cpp" "scene.hpp" 
-    "shader.hpp" "shader.cpp" 
-    "font.cpp" "font.hpp" 
-    "glyph.cpp" "glyph.hpp" 
-    "test_font_scene.hpp" "test_font_scene.cpp"  "font_atlas.cpp" "font_atlas.hpp")
+    "imgui_impl_opengl3.cpp"
+    "imgui_impl_sdl.cpp"
+    "scene.cpp"
+    "shader.cpp" 
+    "font.cpp"
+    "glyph.cpp"
+    "test_font_scene.cpp"  
+    "font_atlas.cpp"
+    "msdf_font_atlas.cpp"
+    "msdf_font.cpp"
+    "msdf_glyph.cpp"
+    "test_msdf_font_scene.cpp"
+)
 
 find_package(freetype CONFIG REQUIRED)
 find_package(GLEW REQUIRED)
@@ -27,16 +32,16 @@ target_link_libraries(main PRIVATE SDL2::SDL2 SDL2::SDL2main
     imgui::imgui freetype harfbuzz::harfbuzz GLEW::GLEW glm ICU::uc msdfgen::msdfgen msdfgen::msdfgen-ext)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Sarabun/fonts/Sarabun-Regular.ttf
-     DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+    DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/source-sans-pro/TTF/SourceSansPro-Regular.ttf
-     DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+    DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/mplus-fonts/fonts/mplus-1c-regular.ttf
-     DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+    DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
-add_custom_target(resources ALL SOURCES shaders/glyph.frag shaders/glyph.vert)
+add_custom_target(resources ALL SOURCES shaders/glyph.frag shaders/glyph.vert shaders/msdf.frag shaders/msdf.vert)
 
 add_custom_command(TARGET resources PRE_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E copy_directory
-                       ${CMAKE_SOURCE_DIR}/shaders/ ${CMAKE_CURRENT_BINARY_DIR})
+                    COMMAND ${CMAKE_COMMAND} -E copy_directory
+                    ${CMAKE_SOURCE_DIR}/shaders/ ${CMAKE_CURRENT_BINARY_DIR})
