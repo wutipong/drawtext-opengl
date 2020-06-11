@@ -46,13 +46,12 @@ MsdfFont::CreateGlyphs(const Context &context, float &x,
   auto glyphPositions = hb_buffer_get_glyph_positions(buffer, NULL);
 
   for (auto i = 0; i < glyphCount; i++) {
-    FT_Load_Glyph(ftFace.get(), glyphInfos[i].codepoint, FT_LOAD_RENDER);
 
     auto bitmap = ftFace->glyph->bitmap;
 
-    auto texture = CreateTextureFromFT_Bitmap(bitmap);
-    auto width = bitmap.width;
-    auto height = bitmap.rows;
+    int width, height;
+    auto texture =
+        CreateTexture(glyphInfos[i].codepoint, ftFace.get(), width, height);
 
     auto metrics = ftFace->glyph->metrics;
 
@@ -80,38 +79,31 @@ MsdfFont::CreateGlyphs(const Context &context, float &x,
   return output;
 }
 
-GLuint MsdfFont::CreateTextureFromFT_Bitmap(const FT_Bitmap &bitmap) {
+GLuint MsdfFont::CreateTexture(const hb_codepoint_t &codepoint, FT_Face face,
+                               int &width, int &height) {
   GLuint texture;
   glGenTextures(1, &texture);
 
-  if (bitmap.width == 0 || bitmap.rows == 0) {
-    return texture;
-  }
+  msdfgen::Shape shape;
+
+  msdfgen::loadGlyphIndex(shape, face, codepoint);
+
+  width = (face->bbox.xMax - face->bbox.xMin) >> 6;
+  height = (face->bbox.yMax - face->bbox.yMin) >> 6;
+
+  msdfgen::Bitmap<float, 3> bitmap(width, height);
+  msdfgen::generateMSDF(bitmap, shape, 1.0, msdfgen::Vector2(1.0, 1.0),
+                        msdfgen::Vector2(0, 0));
 
   glBindTexture(GL_TEXTURE_2D, texture);
 
-  auto width = bitmap.width;
-  auto height = bitmap.rows;
-  auto pitch = bitmap.pitch;
-
-  unsigned char *src = bitmap.buffer;
-  unsigned char *buffer = new unsigned char[size_t(width) * size_t(height)];
-
-  for (int i = 0; i < height; i++) {
-    memcpy(buffer + (i * width), src + (i * pitch), width);
-  }
-
-  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width, height, 0, GL_RED,
-               GL_UNSIGNED_BYTE, buffer);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_FLOAT,
+               bitmap.operator const float *());
 
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-
-  delete[] buffer;
 
   return texture;
 }

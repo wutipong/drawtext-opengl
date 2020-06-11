@@ -9,13 +9,13 @@ GLuint MsdfGlyph::vertexShader;
 GLuint MsdfGlyph::fragmentShader;
 GLuint MsdfGlyph::colorUniform;
 
-const float MsdfGlyph::vertices[] = {0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+const float MsdfGlyph::vertices[] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
 
-                                     1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+                                     1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
 
-                                     1.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+                                     1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
 
-                                     0.0f, 1.0f, 0.0f, 0.0f, 0.0f};
+                                     0.0f, 1.0f, 0.0f, 0.0f, 1.0f};
 
 const GLubyte MsdfGlyph::indices[] = {0, 1, 2,
 

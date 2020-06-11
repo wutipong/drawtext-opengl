@@ -15,6 +15,9 @@
 
 #include <unicode/unistr.h>
 
+#include <ext/import-font.h>
+#include <msdfgen.h>
+
 #include "msdf_glyph.hpp"
 
 class Context;
@@ -36,5 +39,6 @@ private:
   std::shared_ptr<FT_FaceRec> ftFace;
   std::shared_ptr<hb_font_t> hbMsdfFont;
 
-  static GLuint CreateTextureFromFT_Bitmap(const FT_Bitmap &bitmap);
+  static GLuint CreateTexture(const hb_codepoint_t &codepoint,
+                              const FT_Face face, int &width, int &height);
 };
