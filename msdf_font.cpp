@@ -25,7 +25,7 @@ MsdfFont::MsdfFont(const Context &context, const std::string filename) {
 
 std::vector<std::shared_ptr<MsdfGlyph>>
 MsdfFont::CreateGlyphs(const Context &context, float &x,
-                       const icu::UnicodeString &str, const int &pixelSize) {
+                       const icu::UnicodeString &str) {
 
   std::vector<std::shared_ptr<MsdfGlyph>> output;
 
@@ -76,7 +76,8 @@ MsdfFont::CreateGlyphs(const Context &context, float &x,
                                   bearingY + offsetY - height - 4.0f, 0.0f));
     glyphTransform = glm::scale(glyphTransform, glm::vec3(width, height, 1.0));
 
-    auto g = new MsdfGlyph(texture, glyphTransform);
+    auto g = new MsdfGlyph(texture, glyphTransform,
+                           1 / 64.0f * ftFace->units_per_EM);
 
     output.push_back(std::shared_ptr<MsdfGlyph>(g));
 

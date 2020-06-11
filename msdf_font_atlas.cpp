@@ -58,6 +58,6 @@ void MsdfFontAtlas::AddGlyphs(const Context &context,
     f = &iter->font;
   }
 
-  auto g = f->CreateGlyphs(context, x, str, pixelSize);
+  auto g = f->CreateGlyphs(context, x, str);
   glyphs.insert(glyphs.end(), g.begin(), g.end());
 }

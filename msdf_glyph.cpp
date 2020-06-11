@@ -22,8 +22,10 @@ const GLubyte MsdfGlyph::indices[] = {0, 1, 2,
 
                                       2, 3, 0};
 
-MsdfGlyph::MsdfGlyph(const GLuint &texture, const glm::mat4 &glyphTransform)
-    : texture(texture), glyphTransform(glyphTransform) {
+MsdfGlyph::MsdfGlyph(const GLuint &texture, const glm::mat4 &glyphTransform,
+                     const float &actualPixelSize)
+    : texture(texture), glyphTransform(glyphTransform),
+      actualPixelSize(actualPixelSize) {
   if (texture == 0) {
     return;
   }

@@ -29,8 +29,7 @@ public:
   MsdfFont(const Context &context, const std::string filename);
 
   std::vector<std::shared_ptr<MsdfGlyph>>
-  CreateGlyphs(const Context &context, float &x, const icu::UnicodeString &str,
-               const int &pixelSize);
+  CreateGlyphs(const Context &context, float &x, const icu::UnicodeString &str);
 
   hb_direction_t direction = HB_DIRECTION_LTR;
   hb_script_t script = HB_SCRIPT_LATIN;
