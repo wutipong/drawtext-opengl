@@ -24,7 +24,7 @@ find_package(glm CONFIG REQUIRED)
 find_package(ICU REQUIRED COMPONENTS uc)
 
 target_link_libraries(main PRIVATE SDL2::SDL2 SDL2::SDL2main 
-    imgui::imgui freetype harfbuzz::harfbuzz GLEW::GLEW glm ICU::uc msdfgen::msdfgen)
+    imgui::imgui freetype harfbuzz::harfbuzz GLEW::GLEW glm ICU::uc msdfgen::msdfgen msdfgen::msdfgen-ext)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Sarabun/fonts/Sarabun-Regular.ttf
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
