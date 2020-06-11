@@ -91,12 +91,12 @@ GLuint MsdfFont::CreateTexture(const hb_codepoint_t &codepoint, FT_Face face,
   msdfgen::edgeColoringSimple(shape, 3, 0);
 
   auto bound = shape.getBounds();
-  width = 4 + bound.r - bound.l;
-  height = 4 + bound.t - bound.b;
+  width = 8 + bound.r - bound.l;
+  height = 8 + bound.t - bound.b;
 
   msdfgen::Bitmap<float, 3> bitmap(width, height);
 
-  constexpr double pxRange = 0.5;
+  constexpr double pxRange = 2.0;
   msdfgen::generateMSDF(bitmap, shape, pxRange, msdfgen::Vector2(1.0, 1.0),
                         msdfgen::Vector2(0, 0));
 
