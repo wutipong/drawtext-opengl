@@ -29,7 +29,7 @@ MsdfFont::CreateGlyphs(const Context &context, float &x,
 
   std::vector<std::shared_ptr<MsdfGlyph>> output;
 
-  FT_Set_Pixel_Sizes(ftFace.get(), 0, pixelSize);
+  FT_Set_Pixel_Sizes(ftFace.get(), 0, 16);
   hb_ft_font_changed(hbMsdfFont.get());
 
   auto buffer = hb_buffer_create();
