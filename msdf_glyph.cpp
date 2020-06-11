@@ -8,6 +8,7 @@ GLuint MsdfGlyph::program;
 GLuint MsdfGlyph::vertexShader;
 GLuint MsdfGlyph::fragmentShader;
 GLuint MsdfGlyph::colorUniform;
+GLuint MsdfGlyph::pxRangeUniform;
 
 const float MsdfGlyph::vertices[] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
 
@@ -77,7 +78,10 @@ void MsdfGlyph::Render(const Context &context, const glm::vec4 &color) {
 
   glBindTexture(GL_TEXTURE_2D, texture);
 
+  constexpr float pxRange = 0.5f;
+
   glUniform4f(colorUniform, color.r, color.g, color.b, color.a);
+  glUniform1f(pxRangeUniform, pxRange);
 
   glUseProgram(program);
 
@@ -100,7 +104,8 @@ void MsdfGlyph::Init() {
   glLinkProgram(program);
 
   glUseProgram(program);
-  colorUniform = glGetUniformLocation(program, "glyphColor");
+  colorUniform = glGetUniformLocation(program, "fgColor");
+  pxRangeUniform = glGetUniformLocation(program, "pxRange");
 };
 
 void MsdfGlyph::CleanUp() {

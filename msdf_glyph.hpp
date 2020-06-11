@@ -35,6 +35,7 @@ private:
   static GLuint vertexShader;
   static GLuint fragmentShader;
   static GLuint colorUniform;
+  static GLuint pxRangeUniform;
 
   static const float vertices[];
   static const GLubyte indices[];

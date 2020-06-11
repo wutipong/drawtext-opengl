@@ -62,9 +62,9 @@ MsdfFont::CreateGlyphs(const Context &context, float &x,
     float offsetY = (float)glyphPositions[i].y_offset / 64.0f;
 
     glm::mat4 glyphTransform{1.0f};
-    glyphTransform = glm::translate(
-        glyphTransform,
-        glm::vec3(x + bearingX + offsetX, bearingY - height + offsetY, 0.0f));
+    glyphTransform =
+        glm::translate(glyphTransform, glm::vec3(x + bearingX + offsetX,
+                                                 bearingY + offsetY, 0.0f));
     glyphTransform = glm::scale(glyphTransform, glm::vec3(width, height, 1.0));
 
     auto g = new MsdfGlyph(texture, glyphTransform);
@@ -87,12 +87,17 @@ GLuint MsdfFont::CreateTexture(const hb_codepoint_t &codepoint, FT_Face face,
   msdfgen::Shape shape;
 
   msdfgen::loadGlyphIndex(shape, face, codepoint);
+  shape.normalize();
+  msdfgen::edgeColoringSimple(shape, 3, 0);
 
-  width = (face->bbox.xMax - face->bbox.xMin) >> 6;
-  height = (face->bbox.yMax - face->bbox.yMin) >> 6;
+  auto bound = shape.getBounds();
+  width = 4 + bound.r - bound.l;
+  height = 4 + bound.t - bound.b;
 
   msdfgen::Bitmap<float, 3> bitmap(width, height);
-  msdfgen::generateMSDF(bitmap, shape, 1.0, msdfgen::Vector2(1.0, 1.0),
+
+  constexpr double pxRange = 0.5;
+  msdfgen::generateMSDF(bitmap, shape, pxRange, msdfgen::Vector2(1.0, 1.0),
                         msdfgen::Vector2(0, 0));
 
   glBindTexture(GL_TEXTURE_2D, texture);

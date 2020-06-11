@@ -10,7 +10,7 @@
 #include "imgui_impl_opengl3.h"
 #include "imgui_impl_sdl.h"
 #include "scene.hpp"
-#include "test_font_scene.hpp"
+#include "test_msdf_font_scene.hpp"
 
 #include <SDL.h>
 #include <stdio.h>
@@ -139,7 +139,7 @@ int main(int, char **) {
 
   FT_Init_FreeType(&context.ftLibrary);
 
-  Scene::ChangeScene<TestFontScene>(context);
+  Scene::ChangeScene<TestMsdfFontScene>(context);
 
   while (!context.isDone) {
     context.events.clear();
