@@ -1,6 +1,7 @@
-#include "msdf_test_font_scene.hpp"
+#include "test_msdf_font_scene.hpp"
 
-#include "glyph.hpp"
+#include "msdf_glyph.hpp"
+#include "test_font_scene.hpp"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -16,7 +17,7 @@ void TestMsdfFontScene::Tick(Context &context) {
 }
 
 bool TestMsdfFontScene::Init(Context &context) {
-  Glyph::Init();
+  MsdfGlyph::Init();
   fontAtlas.SetDefault(MsdfFont{context, "SourceSansPro-Regular.ttf"});
   fontAtlas.AddMsdfFont(MsdfFont{context, "Sarabun-Regular.ttf"}, USCRIPT_THAI,
                         HB_SCRIPT_THAI);
@@ -31,19 +32,24 @@ bool TestMsdfFontScene::Init(Context &context) {
 
   return true;
 }
-void TestMsdfFontScene::Cleanup(Context &context) { Glyph::CleanUp(); }
+void TestMsdfFontScene::Cleanup(Context &context) { MsdfGlyph::CleanUp(); }
 
 void TestMsdfFontScene::DrawUI(Context &context) {
 
-  ImGui::Begin("Menu");
+  ImGui::Begin("Multi-channel SDF");
 
   bool textChanged = ImGui::InputText("Text", buffer.data(), buffer.size());
   bool sizeChanged = ImGui::SliderInt("size", &pixelSize, 0, 128);
   bool colorChanged = ImGui::ColorEdit4("color", glm::value_ptr(color));
   ImGui::Separator();
+  bool sceneChange = ImGui::Button("Freetype Bitmap");
   context.isDone = ImGui::Button("quit");
 
   ImGui::End();
+
+  if (sceneChange) {
+    Scene::ChangeScene<TestFontScene>(context);
+  }
 
   if (textChanged || sizeChanged || colorChanged) {
     auto text = icu::UnicodeString::fromUTF8(buffer.data());

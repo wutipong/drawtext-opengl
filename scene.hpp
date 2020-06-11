@@ -21,6 +21,7 @@ public:
 
 private:
   static std::unique_ptr<Scene> currentScene;
+  static std::unique_ptr<Scene> nextScene;
 };
 
 template <class T> void Scene::ChangeScene(Context &context) {
@@ -29,10 +30,7 @@ template <class T> void Scene::ChangeScene(Context &context) {
   if (!newScene->Init(context))
     return;
 
-  if (currentScene != nullptr)
-    currentScene->Cleanup(context);
-
-  currentScene = std::move(newScene);
+  nextScene = std::move(newScene);
 }
 
 #endif

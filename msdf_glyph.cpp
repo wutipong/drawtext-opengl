@@ -90,8 +90,8 @@ void MsdfGlyph::Render(const Context &context, const glm::vec4 &color) {
 };
 
 void MsdfGlyph::Init() {
-  vertexShader = ReadShader(GL_VERTEX_SHADER, "glyph.vert");
-  fragmentShader = ReadShader(GL_FRAGMENT_SHADER, "glyph.frag");
+  vertexShader = ReadShader(GL_VERTEX_SHADER, "msdf.vert");
+  fragmentShader = ReadShader(GL_FRAGMENT_SHADER, "msdf.frag");
 
   program = glCreateProgram();
 
