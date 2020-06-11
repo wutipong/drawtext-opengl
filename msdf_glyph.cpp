@@ -22,9 +22,11 @@ const GLubyte MsdfGlyph::indices[] = {0, 1, 2,
 
                                       2, 3, 0};
 
-MsdfGlyph::MsdfGlyph(const GLuint &texture, const glm::mat4 &glyphTransform,
+MsdfGlyph::MsdfGlyph(const GLuint &texture, const glm::vec2 &glyphPos,
+                     const glm::vec2 &glyphSize,
                      const float &actualPixelSize)
-    : texture(texture), glyphTransform(glyphTransform),
+    : texture(texture), glyphPos(glyphPos),
+      glyphSize(glyphSize),
       actualPixelSize(actualPixelSize) {
   if (texture == 0) {
     return;
@@ -74,9 +76,13 @@ void MsdfGlyph::Render(const Context &context, const glm::vec4 &color) {
   glEnableVertexAttribArray(0);
   glEnableVertexAttribArray(1);
 
+  float scale = pixelSize / actualPixelSize;
+
   glUniform2f(0, context.windowWidth, context.windowHeight);
-  glUniformMatrix4fv(1, 1, GL_FALSE, glm::value_ptr(glyphTransform));
-  glUniformMatrix4fv(2, 1, GL_FALSE, glm::value_ptr(transform));
+  glUniform2f(1, glyphSize.x, glyphSize.y);
+  glUniform2f(2, glyphPos.x, glyphPos.y);
+  glUniformMatrix4fv(3, 1, GL_FALSE, glm::value_ptr(transform));
+  glUniform1f(4, scale);
 
   glBindTexture(GL_TEXTURE_2D, texture);
 

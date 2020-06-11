@@ -12,6 +12,8 @@ public:
 
   glm::mat4 transform = glm::mat4(1.0f);
 
+  float pixelSize = 64.0f;
+
   static void Init();
   static void CleanUp();
 
@@ -19,7 +21,8 @@ private:
   friend class MsdfFont;
   MsdfGlyph(){};
   MsdfGlyph(const MsdfGlyph &){};
-  MsdfGlyph(const GLuint &texture, const glm::mat4 &glyphTransform,
+  MsdfGlyph(const GLuint &texture, const glm::vec2 &glyphPos,
+            const glm::vec2 &glyphSize,
             const float &actualPixelSize);
 
   static constexpr size_t vertexBufferIndex = 0;
@@ -30,7 +33,8 @@ private:
   GLuint buffers[bufferSize] = {0, 0};
   GLuint vertexArray = 0;
 
-  const glm::mat4 glyphTransform{1.0f};
+  const glm::vec2 glyphPos{0};
+  const glm::vec2 glyphSize{1};
   const float actualPixelSize = 1.0f;
 
   static GLuint program;
