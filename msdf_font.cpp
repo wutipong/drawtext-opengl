@@ -71,9 +71,9 @@ MsdfFont::CreateGlyphs(const Context &context, float &x,
     float offsetY = (float)glyphPositions[i].y_offset / 64.0f;
 
     glm::mat4 glyphTransform{1.0f};
-    glyphTransform =
-        glm::translate(glyphTransform, glm::vec3(x + bearingX + offsetX,
-                                                 bearingY + offsetY, 0.0f));
+    glyphTransform = glm::translate(
+        glyphTransform, glm::vec3(x + bearingX + offsetX - 4.0f,
+                                  bearingY + offsetY - height - 4.0f, 0.0f));
     glyphTransform = glm::scale(glyphTransform, glm::vec3(width, height, 1.0));
 
     auto g = new MsdfGlyph(texture, glyphTransform);
