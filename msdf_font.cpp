@@ -29,7 +29,16 @@ MsdfFont::CreateGlyphs(const Context &context, float &x,
 
   std::vector<std::shared_ptr<MsdfGlyph>> output;
 
-  FT_Set_Pixel_Sizes(ftFace.get(), 0, 16);
+  FT_Size_RequestRec req;
+
+  req.type = FT_SIZE_REQUEST_TYPE_NOMINAL;
+  req.width = ftFace->units_per_EM;
+  req.height = ftFace->units_per_EM;
+  req.horiResolution = 0;
+  req.vertResolution = 0;
+
+  FT_Request_Size(ftFace.get(), &req);
+
   hb_ft_font_changed(hbMsdfFont.get());
 
   auto buffer = hb_buffer_create();
@@ -98,7 +107,7 @@ GLuint MsdfFont::CreateTexture(const hb_codepoint_t &codepoint, FT_Face face,
 
   constexpr double pxRange = 2.0;
   msdfgen::generateMSDF(bitmap, shape, pxRange, msdfgen::Vector2(1.0, 1.0),
-                        msdfgen::Vector2(0, 0));
+                        msdfgen::Vector2(-bound.l + 4, -bound.b + 4));
 
   glBindTexture(GL_TEXTURE_2D, texture);
 
