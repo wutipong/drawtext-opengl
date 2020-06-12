@@ -14,8 +14,10 @@ void main() {
   vec4 pos = glyphTransform * vec4(aPos, 1.0f);
   pos = transform * pos;
 
-  gl_Position = vec4(2 * (pos.x / screen.x) - 1.0f,
-                     2 * (pos.y / screen.y) - 1.0f, pos.z, pos.w);
+  vec2 halfScreen = screen / 2;
+
+  gl_Position = vec4((pos.x - halfScreen.x) / halfScreen.x,
+                     (pos.y - halfScreen.y) / halfScreen.y, pos.z, pos.w);
 
   TexCoord = aTexCoord;
 }
