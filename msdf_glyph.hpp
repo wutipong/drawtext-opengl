@@ -13,7 +13,7 @@ public:
   glm::mat4 transform = glm::mat4(1.0f);
 
   float pixelSize = 64.0f;
-
+  static constexpr float pxRange = 4.0f;
   static void Init();
   static void CleanUp();
 

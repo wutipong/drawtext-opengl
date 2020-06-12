@@ -86,8 +86,6 @@ void MsdfGlyph::Render(const Context &context, const glm::vec4 &color) {
 
   glBindTexture(GL_TEXTURE_2D, texture);
 
-  constexpr float pxRange = 2.0f;
-
   glUniform4f(colorUniform, color.r, color.g, color.b, color.a);
   glUniform1f(pxRangeUniform, pxRange);
 

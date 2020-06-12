@@ -104,8 +104,7 @@ GLuint MsdfFont::CreateTexture(const hb_codepoint_t &codepoint, FT_Face face,
 
   msdfgen::Bitmap<float, 3> bitmap(width, height);
 
-  constexpr double pxRange = 2.0;
-  msdfgen::generateMSDF(bitmap, shape, pxRange, msdfgen::Vector2(1.0, 1.0),
+  msdfgen::generateMSDF(bitmap, shape, MsdfGlyph::pxRange, msdfgen::Vector2(1.0, 1.0),
                         msdfgen::Vector2(-bound.l + 4, -bound.b + 4));
 
   glBindTexture(GL_TEXTURE_2D, texture);
