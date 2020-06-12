@@ -51,7 +51,7 @@ void TestMsdfFontScene::DrawUI(Context &context) {
     Scene::ChangeScene<TestFontScene>(context);
   }
 
-  if (textChanged || sizeChanged || colorChanged) {
+  if (textChanged || colorChanged) {
     auto text = icu::UnicodeString::fromUTF8(buffer.data());
 
     glyphs = fontAtlas.CreateGlyphs(context, text, pixelSize);
@@ -60,5 +60,9 @@ void TestMsdfFontScene::DrawUI(Context &context) {
       g->transform = glm::translate(
           g->transform, glm::vec3(0, context.windowHeight / 2, 0.0));
     }
+  }
+
+  for (auto g : glyphs) {
+    g->pixelSize = pixelSize;
   }
 }
