@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.15)
 
 project(drawtext-opengl)
 
-add_subdirectory(msdfgen)
 
 add_executable(main 
 	"main.cpp"
@@ -14,10 +13,6 @@ add_executable(main
     "glyph.cpp"
     "test_font_scene.cpp"  
     "font_atlas.cpp"
-    "msdf_font_atlas.cpp"
-    "msdf_font.cpp"
-    "msdf_glyph.cpp"
-    "test_msdf_font_scene.cpp"
 )
 
 find_package(freetype CONFIG REQUIRED)
@@ -29,7 +24,7 @@ find_package(glm CONFIG REQUIRED)
 find_package(ICU REQUIRED COMPONENTS uc)
 
 target_link_libraries(main PRIVATE SDL2::SDL2 SDL2::SDL2main 
-    imgui::imgui freetype harfbuzz::harfbuzz GLEW::GLEW glm ICU::uc msdfgen::msdfgen msdfgen::msdfgen-ext)
+    imgui::imgui freetype harfbuzz::harfbuzz GLEW::GLEW glm ICU::uc)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Sarabun/fonts/Sarabun-Regular.ttf
     DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
@@ -40,7 +35,7 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/source-sans-pro/TTF/SourceSansPro-Regular.
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/mplus-fonts/fonts/mplus-1c-regular.ttf
     DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
-add_custom_target(resources ALL SOURCES shaders/glyph.frag shaders/glyph.vert shaders/msdf.frag shaders/msdf.vert)
+add_custom_target(resources ALL SOURCES shaders/glyph.frag shaders/glyph.vert)
 
 add_custom_command(TARGET resources PRE_BUILD
                     COMMAND ${CMAKE_COMMAND} -E copy_directory

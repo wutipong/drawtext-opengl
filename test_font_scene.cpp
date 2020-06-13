@@ -9,8 +9,6 @@
 
 #include <unicode/unistr.h>
 
-#include "test_msdf_font_scene.hpp"
-
 void TestFontScene::Tick(Context &context) {
   for (auto g : glyphs) {
     g->Render(context, color);
@@ -42,14 +40,9 @@ void TestFontScene::DrawUI(Context &context) {
   bool sizeChanged = ImGui::SliderInt("size", &pixelSize, 0, 128);
   bool colorChanged = ImGui::ColorEdit4("color", glm::value_ptr(color));
   ImGui::Separator();
-  bool sceneChange = ImGui::Button("Multi-channel SDF");
   context.isDone = ImGui::Button("quit");
 
   ImGui::End();
-
-  if (sceneChange) {
-    Scene::ChangeScene<TestMsdfFontScene>(context);
-  }
 
   if (textChanged || sizeChanged || colorChanged) {
     auto text = icu::UnicodeString::fromUTF8(buffer.data());
