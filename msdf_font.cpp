@@ -98,19 +98,32 @@ GLuint MsdfFont::CreateTexture(const hb_codepoint_t &codepoint, FT_Face face,
   shape.normalize();
   msdfgen::edgeColoringSimple(shape, 3, 0);
 
-  auto bound = shape.getBounds();
-  width = 8 + bound.r - bound.l;
-  height = 8 + bound.t - bound.b;
+  constexpr int padding = 4;
+  constexpr float scale = 2.0f;
+  auto bounds = shape.getBounds();
+  width = (padding * 2) + bounds.r - bounds.l;
+  height = (padding * 2) + bounds.t - bounds.b;
 
-  msdfgen::Bitmap<float, 3> bitmap(width, height);
+  double l = bounds.l, b = bounds.b, r = bounds.r, t = bounds.t;
+  msdfgen::Vector2 frame(width, height);
 
-  msdfgen::generateMSDF(bitmap, shape, MsdfGlyph::pxRange, msdfgen::Vector2(1.0, 1.0),
-                        msdfgen::Vector2(-bound.l + 4, -bound.b + 4));
+  frame -= MsdfGlyph::pxRange;
+  if (l >= r || b >= t)
+    l = 0, b = 0, r = 1, t = 1;
+
+  msdfgen::Vector2 dims(r - l, t - b);
+  msdfgen::Vector2 translate =
+      .5 * (frame / scale - dims) - msdfgen::Vector2(l, b);
+
+  msdfgen::Bitmap<float, 3> bitmap(width * scale, height * scale);
+
+  msdfgen::generateMSDF(bitmap, shape, MsdfGlyph::pxRange,
+                        msdfgen::Vector2(1.0, 1.0) * scale, translate);
 
   glBindTexture(GL_TEXTURE_2D, texture);
 
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_FLOAT,
-               bitmap.operator const float *());
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width * scale, height * scale, 0,
+               GL_RGB, GL_FLOAT, bitmap.operator const float *());
 
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
