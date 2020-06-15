@@ -74,9 +74,13 @@ int main(int, char **) {
 
   SDL_WindowFlags window_flags = (SDL_WindowFlags)(
       SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
+
+  constexpr int windowWidth = 1600;
+  constexpr int windowHeight = 900;
+
   SDL_Window *window = SDL_CreateWindow(
       "DrawText sample using OpenGL, FreeType2, Harfbuzz.",
-      SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
+      SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, window_flags);
   SDL_GLContext gl_context = SDL_GL_CreateContext(window);
   SDL_GL_MakeCurrent(window, gl_context);
   SDL_GL_SetSwapInterval(1); // Enable vsync
@@ -129,17 +133,23 @@ int main(int, char **) {
 
   io.Fonts->Build();
 
-  ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
-  // Main loop
-
   Context context;
   context.isDone = false;
-  SDL_GetWindowSize(window, &context.windowWidth, &context.windowHeight);
-
   FT_Init_FreeType(&context.ftLibrary);
 
   Scene::ChangeScene<TestFontScene>(context);
+
+  constexpr int viewportWidth = 1280;
+  constexpr int viewportHeight = 720;
+
+  SDL_Rect viewport{
+      windowWidth/2 - viewportWidth/2, 
+      windowHeight/2  - viewportHeight /2, 
+      viewportWidth, viewportHeight
+  };
+
+  context.windowWidth = viewportWidth;
+  context.windowHeight = viewportHeight;
 
   while (!context.isDone) {
     context.events.clear();
@@ -151,19 +161,12 @@ int main(int, char **) {
       if (event.type == SDL_QUIT)
         context.isDone = true;
 
-      if (event.type == SDL_WINDOWEVENT &&
-          event.window.event == SDL_WINDOWEVENT_CLOSE &&
-          event.window.windowID == SDL_GetWindowID(window))
-        context.isDone = true;
-
       context.events.push_back(event);
     }
 
     if (context.isDone) {
       break;
     }
-
-    SDL_GetWindowSize(window, &context.windowWidth, &context.windowHeight);
 
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame(window);
@@ -172,11 +175,17 @@ int main(int, char **) {
     Scene::DrawUICurrent(context);
 
     ImGui::Render();
-    glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
-    glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
+    
+    glClearColor(0, 0, 0, 0);
     glClear(GL_COLOR_BUFFER_BIT);
 
+    glViewport(viewport.x, viewport.y, viewport.w, viewport.h);
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(viewport.x, viewport.y, viewport.w, viewport.h);
+    
     Scene::TickCurrent(context);
+    glViewport(0, 0, windowWidth, windowHeight);
+    glDisable(GL_SCISSOR_TEST);
 
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 

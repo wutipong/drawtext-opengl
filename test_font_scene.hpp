@@ -23,4 +23,6 @@ private:
   std::array<char, 100> buffer;
   int pixelSize = 64;
   glm::vec4 color = {0, 0, 0, 1.0f};
+
+  glm::vec4 clearColor{0.45f, 0.55f, 0.60f, 1.00f};
 };

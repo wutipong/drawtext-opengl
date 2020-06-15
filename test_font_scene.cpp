@@ -10,6 +10,9 @@
 #include <unicode/unistr.h>
 
 void TestFontScene::Tick(Context &context) {
+  glClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
+  glClear(GL_COLOR_BUFFER_BIT);
+
   for (auto g : glyphs) {
     g->Render(context, color);
   }
@@ -39,6 +42,8 @@ void TestFontScene::DrawUI(Context &context) {
   bool textChanged = ImGui::InputText("Text", buffer.data(), buffer.size());
   bool sizeChanged = ImGui::SliderInt("size", &pixelSize, 0, 128);
   bool colorChanged = ImGui::ColorEdit4("color", glm::value_ptr(color));
+  ImGui::Separator();
+  ImGui::ColorEdit4("background", glm::value_ptr(clearColor));
   ImGui::Separator();
   context.isDone = ImGui::Button("quit");
 
