@@ -1,6 +1,6 @@
 #pragma once
 
-#include <gl/glew.h>
+#include <GL/gl3w.h>
 #include <glm/glm.hpp>
 
 #include "context.hpp"

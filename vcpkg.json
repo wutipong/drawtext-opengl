@@ -1,0 +1,20 @@
+{
+  "name": "drawtext-opengl",
+  "version-string": "0.1.0-dev",
+  "dependencies": [
+    "freetype",
+    "gl3w",
+    "glm",
+    "harfbuzz",
+    "opengl",
+    "sdl2",
+    "icu",
+    {
+      "name": "imgui",
+      "features": [
+        "opengl3-binding",
+        "sdl2-binding"
+      ]
+    }
+  ]
+}

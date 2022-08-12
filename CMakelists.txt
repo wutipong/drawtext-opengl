@@ -5,8 +5,6 @@ project(drawtext-opengl)
 
 add_executable(main 
 	"main.cpp"
-    "imgui_impl_opengl3.cpp"
-    "imgui_impl_sdl.cpp"
     "scene.cpp"
     "shader.cpp" 
     "font.cpp"
@@ -16,7 +14,7 @@ add_executable(main
 )
 
 find_package(freetype CONFIG REQUIRED)
-find_package(GLEW REQUIRED)
+find_package(gl3w CONFIG REQUIRED)
 find_package(SDL2 CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)
 find_package(harfbuzz CONFIG REQUIRED)
@@ -24,7 +22,7 @@ find_package(glm CONFIG REQUIRED)
 find_package(ICU REQUIRED COMPONENTS uc)
 
 target_link_libraries(main PRIVATE SDL2::SDL2 SDL2::SDL2main 
-    imgui::imgui freetype harfbuzz::harfbuzz GLEW::GLEW glm ICU::uc)
+    imgui::imgui freetype harfbuzz::harfbuzz unofficial::gl3w::gl3w ICU::uc)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Sarabun/fonts/Sarabun-Regular.ttf
     DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

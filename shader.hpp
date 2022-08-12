@@ -1,5 +1,5 @@
 #pragma once
 
-#include <gl/glew.h>
+#include <GL/gl3w.h>
 
 GLuint ReadShader(const GLenum &shaderType, const char *filename);
